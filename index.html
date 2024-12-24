@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- 
+	///////////////////////////////////////////////////////////////
+  Final Author Start
+	///////////////////////////////////////////////////////////////
+	-->
+  <meta author="Final Author" content="Mohammad Aminul Islam"/>
+  <!-- 
+  ///////////////////////////////////////////////////////////////
+  Final Author End
+  ///////////////////////////////////////////////////////////////
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>english-speaking-practice-club</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .section {
+      text-align: center;
+      margin: 20px;
+      flex: 1 1 calc(33.33% - 20px);
+      max-width: 300px;
+    }
+
+    img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid #ccc;
+      transition: 0.2s ease;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #A020F0;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #FFC0CB;
+    }
+
+    input[type="text"], select {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: calc(100% - 20px);
+    }
+  </style>
+</head>
+<body>
+  <h1>English Speaking Practice Club</h1>
+  <p>This app, currently under development, is designed to outperform the Google Chrome browser on laptops and desktops running Windows.</p>
+  <div class="container">
+    <!-- Amein Section -->
+    <div class="section">
+      <img id="ameinImage" src="https://i.pinimg.com/736x/14/d8/75/14d875ff76aec7721cba69b65edaf3e6.jpg" alt="Amein">
+      <p>Amein</p>
+      <button id="ameinSpeakButton">Speak</button>
+    </div>
+
+    <!-- Pushpa Section -->
+    <div class="section">
+      <img id="pushpaImage" src="https://i.pinimg.com/736x/7f/e5/c8/7fe5c86885133b1f35aece1fc344a2e3.jpg" alt="Pushpa">
+      <p>Pushpa</p>
+      <button id="pushpaSpeakButton">Speak</button>
+    </div>
+
+    <!-- Demo Section -->
+    <div class="section">
+      <img id="userImage" src="https://i.pinimg.com/736x/be/42/7f/be427fefc66c5fa3f4750212d32b0ede.jpg" alt="User">
+      <p>Speaker & You</p>
+      <input type="text" id="userTextInput" placeholder="Enter text to speak...">
+      <select id="voiceSelect"></select>
+      <div>
+        <button id="userSpeakButton">Speak</button>
+        <button id="refreshButton">Refresh</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const ameinDefaultText = "Hello! I'm Amein. Welcome you to English Speaking Practice Club. This App, currently under development, is designed to outperform the Google Chrome browser on laptops and desktops running Windows.";
+    const pushpaDefaultText = "Hi! I'm Pushpa. Nice to meet you. Now you can practice writing, listening, and speaking with this English Speaking Practice Club App.";
+  
+    let voices = [];
+    let ameinVoice = null;
+    let alternateAmeinVoice = null; // A second, more natural voice
+    let pushpaVoice = null;
+  
+    const loadVoices = () => {
+      voices = window.speechSynthesis.getVoices();
+      const voiceSelect = document.getElementById('voiceSelect');
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+  
+      // Select the most appropriate voice for Pushpa
+      pushpaVoice = voices.find(voice =>
+        voice.name.toLowerCase().includes('female') ||
+        voice.name.toLowerCase().includes('girl') ||
+        voice.name.toLowerCase().includes('child')
+      ) || voices[0]; // Fallback to first available voice for Pushpa
+  
+      // Select the most appropriate voice for Amein
+      ameinVoice = voices.find(voice =>
+        voice.name.toLowerCase().includes('male') ||
+        voice.name.toLowerCase().includes('boy') ||
+        voice.name.toLowerCase().includes('child')
+      ) || voices[0]; // Fallback to first available voice for Amein
+  
+      // Amein voice 
+      alternateAmeinVoice = voices.find(voice =>
+        voice.name.toLowerCase().includes('natural') ||
+        voice.lang.toLowerCase().includes('en-us')
+      ) || ameinVoice; // Fallback to the Amein voice another
+    };
+  
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  
+    // Function to speak text
+    const speakText = (text, voice) => {
+      if (!text.trim()) return;
+  
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (voice) utterance.voice = voice;
+  
+      window.speechSynthesis.speak(utterance);
+    };
+  
+    // Default speaking for Amein and Pushpa
+    window.onload = () => {
+      loadVoices();
+      speakText(ameinsDefaultText, alternateAmeinVoice); // Use the voice for Amein
+      setTimeout(() => speakText(pushpaDefaultText, pushpaVoice), 2000); // Delay to avoid overlap
+    };
+  
+    // Event listeners for buttons
+    document.getElementById('ameinSpeakButton').addEventListener('click', () => {
+      speakText(ameinDefaultText, alternateAmeinVoice); // Use the voice for Amein
+    });
+  
+    document.getElementById('pushpaSpeakButton').addEventListener('click', () => {
+      speakText(pushpaDefaultText, pushpaVoice);
+    });
+  
+    document.getElementById('userSpeakButton').addEventListener('click', () => {
+      const userText = document.getElementById('userTextInput').value;
+      if (userText.trim() === '') {
+          alert('Please enter some text to speak.');
+      } else {
+          const selectedVoice = voices[document.getElementById('voiceSelect').value];
+          speakText(userText, selectedVoice);
+      }
+    });
+  
+    // Event listener for Refresh button
+    document.getElementById('refreshButton').addEventListener('click', () => {
+      location.reload(); // Refreshes the page
+    });
+  </script>
+  <footer>
+    <p>&copy; 2024 All rights reserved by Mohammad Aminul Islam.</p>
+  </footer>
+</body>
+</html>
